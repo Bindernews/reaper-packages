@@ -7,7 +7,7 @@
       </metadata>
       <version name="1.0" author="BinderNews" time="2020-07-05T18:31:34Z">
         <changelog><![CDATA[+ Initial Release]]></changelog>
-        <source main="true">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/color-picker/BinderNews_ColorPicker.lua</source>
+        <source>https://raw.githubusercontent.com/Bindernews/reaper-packages/main/Color/BinderNews_ColorPicker.lua</source>
       </version>
     </reapack>
   </category>
@@ -15,11 +15,11 @@
     <reapack name="BinderNews - Library" type="script">
       <version name="1.0" author="BinderNews" time="2020-07-05T18:31:34Z">
         <changelog><![CDATA[+ Initial Release]]></changelog>
-        <source file="../bn/bgx.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn-lib/bgx.lua</source>
-        <source file="../bn/bmath.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn-lib/bmath.lua</source>
-        <source file="../bn/box.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn-lib/box.lua</source>
-        <source file="../bn/color.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn-lib/color.lua</source>
-        <source file="../bn/table.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn-lib/table.lua</source>
+        <source file="../bn/bgx.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn/bgx.lua</source>
+        <source file="../bn/bmath.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn/bmath.lua</source>
+        <source file="../bn/box.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn/box.lua</source>
+        <source file="../bn/color.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn/color.lua</source>
+        <source file="../bn/table.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn/table.lua</source>
       </version>
     </reapack>
   </category>

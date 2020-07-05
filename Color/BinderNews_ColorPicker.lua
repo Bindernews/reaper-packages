@@ -15,7 +15,7 @@ local String = require("public.string")
 do
   local info = debug.getinfo(1,'S');
   local script_path = info.source:match[[^@?(.*[\/])[^\/]-$]]
-  package.path = package.path .. ";" .. script_path .. "?.lua"
+  package.path = package.path .. ";" .. script_path .. "../?.lua"
 end
 
 local Box = require("bn.box")
