@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8">
+<?xml version="1.0" encoding="utf-8"?>
 <index version="1" name="BinderNews Scripts">
   <category name="Color">
     <reapack name="BinderNews - Color Picker" type="script">
@@ -20,7 +20,7 @@
         <source file="../bn/box.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn-lib/box.lua</source>
         <source file="../bn/color.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn-lib/color.lua</source>
         <source file="../bn/table.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn-lib/table.lua</source>
-      </verison>
+      </version>
     </reapack>
   </category>
 </index>
