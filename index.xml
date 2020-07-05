@@ -7,7 +7,10 @@
       </metadata>
       <version name="1.0" author="BinderNews" time="2020-07-05T18:31:34Z">
         <changelog><![CDATA[+ Initial Release]]></changelog>
-        <source>https://raw.githubusercontent.com/Bindernews/reaper-packages/main/Color/BinderNews_ColorPicker.lua</source>
+        <source>https://github.com/Bindernews/reaper-packages/raw/main/Color/BinderNews_ColorPicker.lua</source>
+        <source>https://github.com/Bindernews/reaper-packages/raw/main/Color/BinderNews_ColorTracks.lua</source>
+        <source>https://github.com/Bindernews/reaper-packages/raw/main/Color/BinderNews_ColorItems.lua</source>
+        <source>https://github.com/Bindernews/reaper-packages/raw/main/Color/BinderNews_ColorManager.lua</source>
       </version>
     </reapack>
   </category>
@@ -15,11 +18,12 @@
     <reapack name="BinderNews - Library" type="script">
       <version name="1.0" author="BinderNews" time="2020-07-05T18:31:34Z">
         <changelog><![CDATA[+ Initial Release]]></changelog>
-        <source file="../bn/bgx.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn/bgx.lua</source>
-        <source file="../bn/bmath.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn/bmath.lua</source>
-        <source file="../bn/box.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn/box.lua</source>
-        <source file="../bn/color.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn/color.lua</source>
-        <source file="../bn/table.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn/table.lua</source>
+        <source file="../bn/bgx.lua">https://github.com/Bindernews/reaper-packages/raw/main/bn/bgx.lua</source>
+        <source file="../bn/bmath.lua">https://github.com/Bindernews/reaper-packages/raw/main/bn/bmath.lua</source>
+        <source file="../bn/box.lua">https://github.com/Bindernews/reaper-packages/raw/main/bn/box.lua</source>
+        <source file="../bn/color.lua">https://github.com/Bindernews/reaper-packages/raw/main/bn/color.lua</source>
+        <source file="../bn/table.lua">https://github.com/Bindernews/reaper-packages/raw/main/bn/table.lua</source>
+        <source file="../bn/util.lua">https://github.com/Bindernews/reaper-packages/raw/main/bn/util.lua</source>
       </version>
     </reapack>
   </category>

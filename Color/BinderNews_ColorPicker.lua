@@ -1,6 +1,6 @@
 local reaper, gfx, string, table = reaper, gfx, string, table
 
-debug_mode = true
+--debug_mode = true
 
 -- Load the Scythe library
 local libPath = reaper.GetExtState("Scythe v3", "libPath")
@@ -174,12 +174,12 @@ local function buildUI(scale)
     hueLines = 16,
     satLines = 6,
     w = bmath.round(382 * scale),
-    h = bmath.round(586 * scale),
+    h = bmath.round(610 * scale),
     scale = scale,
     -- How many recent colors do we show
     recentColorsCount = 8,
     -- How many favorite colors to show
-    favoriteColorsCount = 8,
+    favoriteColorsCount = 16,
     -- Default corner radius
     cornerRad = pad / 2,
     -- Size of the selection circle
@@ -197,7 +197,7 @@ local function buildUI(scale)
   -- This is basically the layout of the GUI. Each object has a box delcaring its
   -- location. We calculate those boxes here.
   local b0 = Box(pad * 1.5, pad, 0, 0):setRB(ui.w - (pad * 1.5), ui.h - pad)
-  local b1, b2, cols
+  local b1, b2, rows, cols
   -- Color picker box
   ui.cbox = Box(b0.x, (pad * 2.5) + 20, 300 * scale):round()
   -- Luminance picker box
@@ -206,7 +206,7 @@ local function buildUI(scale)
   -- Recent colors and favorite colors
   b1 = Box(b0.x, ui.cbox:B() + (pad * 1.5), 0, 50 * scale):setRB(ui.lbox:R(), nil) 
   ui.recColorArea = b1:clone():cellY(0, 1, 2)
-  ui.favColorArea = b1:clone():cellY(1, 1, 2)
+  ui.favColorArea = b1:clone():cellY(1, 2, 2)
   
   cols = ui.recentColorsCount
   ui.recColors = {}
@@ -215,11 +215,15 @@ local function buildUI(scale)
       :cellX((i - 1), 1, cols):pad(-pad / 2):round()
   end
   
-  cols = ui.favoriteColorsCount
+  -- N.B. Update these if you change ui.favoriteColorsCount
+  rows = 2
+  cols = 8
   ui.favColors = {}
-  for i = 1,cols do
-    ui.favColors[i] = ui.favColorArea:clone()
-      :cellX((i - 1), 1, cols):pad(-pad / 2):round()
+  for j = 0,(rows-1) do
+    b2 = ui.favColorArea:clone():cellY(j, 1, rows)
+    for i = 1,cols do
+      ui.favColors[(j * cols) + i] = b2:clone():cellX((i - 1), 1, cols):pad(-pad / 2):round()
+    end
   end
   
   -- Current color
@@ -248,7 +252,9 @@ local function buildUI(scale)
   -- Accept and Reset buttons
   b1 = Box(b0.x + (pad * 0.2), ui.currentBox:B() + (pad * 1.5), 60 * scale, 30 * scale)
   ui.okBtnBox = b1:clone():round()
-  ui.resetBtnBox = b1:setPos(ui.rgbBox:R() - (pad * 1.2) - b1.w, b1.y):round()
+  ui.resetBtnBox = b1:clone():setPos(ui.rgbBox:R() - (pad * 1.2) - b1.w, b1.y):round()
+  -- Rescale button
+  ui.rescaleBtnBox = b1:clone():set(b0:CX() - (b1.w / 2), b1.y, b1.w, b1.h)
   
   return ui
 end
@@ -685,8 +691,15 @@ local function prepImages(w, h)
   gfx.dest = -1
 end
 
+--- Returns an array of {r,g,b} arrays in the range [0,1]
+local function GetFavoriteColors()
+  local fColors = reaper.GetExtState(EXT_STATE_PATH, "favoriteColors")
+  return loadColorList(fColors, ui.favoriteColorsCount, {1,1,1})
+end
+
 --- Display the color picker.
-local function ShowColorPicker(opts)
+local ShowColorPicker
+ShowColorPicker = function(opts)
   opts = opts or {}
   -- Setup the UI
   ui = buildUI(opts.scale or 1)
@@ -706,8 +719,9 @@ local function ShowColorPicker(opts)
     -- Here we load our recent and favorite colors
     local rColors = reaper.GetExtState(EXT_STATE_PATH, "recentColors")
     s.recentColors = loadColorList(rColors, ui.recentColorsCount, {1,1,1})
-    local fColors = reaper.GetExtState(EXT_STATE_PATH, "favoriteColors")
-    s.favoriteColors = loadColorList(fColors, ui.favoriteColorsCount, {1,1,1})
+    -- Load favorite colors
+    local scolors = opts.favoriteColors or reaper.GetExtState(EXT_STATE_PATH, "favoriteColors")
+    s.favoriteColors = loadColorList(scolors, ui.favoriteColorsCount, {1,1,1})
   end
   
   local win_x, win_y = opts.x, opts.y
@@ -804,6 +818,24 @@ local function ShowColorPicker(opts)
       end
     end,
   })
+  btns[6] = Button(ui.rescaleBtnBox, {
+    text = "Rescale",
+    flags = 1 | 4,
+    color = "white",
+    gradient = { btnTop, btnBot, true },
+    border = btnBorder,
+    exec = function(self, mouse)
+      if mouse.clickL then
+        local ok, ret = reaper.GetUserInputs("Rescale", 1, "Scale (0.5 - 3)", "")
+        local retn = tonumber(ret)
+        if retn ~= nil then
+          gfx.quit()
+          opts.scale = bmath.clamp(0.5, 3, retn)
+          ShowColorPicker(opts)
+        end
+      end
+    end,
+  })
   
   for i = 1,ui.recentColorsCount do
     local btnColor = state.recentColors[i]
@@ -864,6 +896,7 @@ if debug_mode then
 end
 
 return {
-  ShowColorPicker = ShowColorPicker,
+  Show = ShowColorPicker,
+  GetFavoriteColors = GetFavoriteColors,
 }
 
