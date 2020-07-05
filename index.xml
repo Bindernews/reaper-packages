@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8">
+<index version="1" name="BinderNews Scripts">
+  <category name="Color">
+    <reapack name="BinderNews - Color Picker" type="script">
+      <metadata>
+        <link rel="website">https://github.com/bindernews/reaper-packages</link>
+      </metadata>
+      <version name="1.0" author="BinderNews" time="2020-07-05T18:31:34Z">
+        <changelog><![CDATA[+ Initial Release]]></changelog>
+        <source main="true">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/color-picker/BinderNews_ColorPicker.lua</source>
+      </version>
+    </reapack>
+  </category>
+  <category name="Development">
+    <reapack name="BinderNews - Library" type="script">
+      <version name="1.0" author="BinderNews" time="2020-07-05T18:31:34Z">
+        <changelog><![CDATA[+ Initial Release]]></changelog>
+        <source file="../bn/bgx.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn-lib/bgx.lua</source>
+        <source file="../bn/bmath.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn-lib/bmath.lua</source>
+        <source file="../bn/box.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn-lib/box.lua</source>
+        <source file="../bn/color.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn-lib/color.lua</source>
+        <source file="../bn/table.lua">https://raw.githubusercontent.com/Bindernews/reaper-packages/main/bn-lib/table.lua</source>
+      </verison>
+    </reapack>
+  </category>
+</index>
