@@ -12,16 +12,14 @@ local Color = require("public.color")
 local String = require("public.string")
 
 -- Load my own libraries
-do
-  local info = debug.getinfo(1,'S');
-  local script_path = info.source:match[[^@?(.*[\/])[^\/]-$]]
-  package.path = package.path .. ";" .. script_path .. "../?.lua"
-end
+local script_path = debug.getinfo(1,'S').source:match[[^@?(.*[\/])[^\/]-$]]
+package.path = package.path .. ";" .. script_path .. "../?.lua"
 
 local Box = require("bn.box")
 local bmath = require("bn.bmath")
 local bgx = require("bn.bgx")
 local bcolor = require("bn.color")
+local U = require("bn/util")
 local lerp,unlerp,hslToRgb,rgbToHsl = 
   bmath.lerp, bmath.unlerp, bcolor.hslToRgb, bcolor.rgbToHsl
 
@@ -36,10 +34,12 @@ local EXT_STATE_PATH = "bn-color-picker"
 -- Tables
 local state, ui = {}, {}
 
--- Debug print: _=dm and Msg("debug message here")
+-- Debug print: _=dm and U.msg(...)
 -- We pre-define local _ to make this easier.
 local dm,_ = debug_mode or false
-local function Msg(str) reaper.ShowConsoleMsg(tostring(str) .. "\n") end
+
+-- Do we have access to SWS? If so we can pull favorites from SWS
+local hasSWS = reaper.BR_Win32_WritePrivateProfileString ~= nil
 
 --------------------
 -- Helper Classes --
@@ -165,6 +165,9 @@ local function loadColorList(s, count, defaultColor)
   return out
 end
 
+--- Layout the UI with a given scale. This sets up the UI state and positions
+-- all of the visual elements. It makes heavy use of the Box class.
+-- @param scale UI scaling factor, range [0.5, 3]
 local function buildUI(scale)
   scale = bmath.clamp(0.5, 3, scale)
   local pad = 10 * scale
@@ -368,8 +371,70 @@ local function colorNumBox(box, title, value, vmax, mouse)
   return nil
 end
 
-function Msg3f(a, b, c)
-  --Msg(("%f, %f, %f"):format(a, b, c))
+-----------------------
+-- Utility Functions --
+-----------------------
+
+--- Convert an array of bytes to a string that can be written using BR_Win32_WritePrivateProfileString.
+-- @param ar Table of bytes
+-- @return string
+local function bytesToProfileString(ar)
+  local t, sum, b = {}, 0, 0
+  for i = 1,#ar do
+    b = ar[i]
+    t[#t+1] = string.format("%02X", b)
+    sum = sum + b
+  end
+  sum = sum % 256
+  t[#t+1] = string.format("%02X", sum)
+  return table.concat(t)
+end
+
+--- Store state.favoriteColors in REAPER's settings, so they become the favorite colors in REAPER.
+-- @param favColors state.favoriteColors
+local function storeFavoriteColorsSWS(favColors)
+  if not hasSWS then
+    reaper.MB("SWS extension is required to use Reaper's color settings", "Error", 0)
+    return
+  end
+  
+  -- Helper to convert float to byte
+  local function addB(t, v) t[#t+1] = math.floor((v * 255) + 0.5) end
+  local ar = {}
+  for i = 1,#favColors do
+    local r,g,b = table.unpack(favColors[i])
+    addB(ar, r)
+    addB(ar, g)
+    addB(ar, b)
+    addB(ar, 0) -- They all show up black unless alpha is 0
+  end
+  local custcolors = bytesToProfileString(ar)
+  reaper.BR_Win32_WritePrivateProfileString("REAPER", "custcolors", custcolors, reaper.get_ini_file())
+end
+
+--- Read the favorite colors from REAPER's settings, and convert them into the same
+-- format ColorPicker uses to store favorites.
+local function loadFavoriteColorsSWS()
+  if not hasSWS then
+    reaper.MB("SWS extension is required to use Reaper's color settings", "Error", 0)
+    return
+  end
+  
+  -- Read Reaper's custom colors
+  local ok, custcolors = reaper.BR_Win32_GetPrivateProfileString("REAPER", "custcolors", "", reaper.get_ini_file())
+  if not ok then
+    reaper.MB("Failed to read custom colors", "Error", 0)
+    return
+  end
+  
+  -- Convert from an array of hex to a comma-separated list of 3-byte hex values
+  local len = custcolors:len() - 1
+  local colors = {}
+  for i = 1,(8*16),8 do
+    table.insert(colors, custcolors:sub(i, i + 6))
+  end
+  colors = table.concat(colors, ",")
+  return colors
 end
 
 --- Call the state.after function. This ends the color picker.
@@ -387,6 +452,11 @@ local function callAfter()
         saveColorList(s.recentColors, ui.recentColorsCount, {1,1,1}), true)
       reaper.SetExtState(EXT_STATE_PATH, "favoriteColors",
         saveColorList(s.favoriteColors, ui.favoriteColorsCount, {1,1,1}), true)
+        
+      if s.useSWS then
+        -- Update REAPER's favorite colors with our own
+        storeFavoriteColorsSWS(s.favoriteColors)
+      end
     end
     
     -- Convert to RGB-255 for after()
@@ -491,7 +561,7 @@ local function uiLoop()
     bgx.circle(cx, cy, ui.selCircleSize, ui.selCircleThick)
     
   else
-    _=dm and Msg("Invalid state " .. state.mode)
+    _=dm and U.msg("Invalid state " .. state.mode)
   end
 
   -- Draw the lightness scale
@@ -504,7 +574,7 @@ local function uiLoop()
     bgx.gradRect(b2, color1, {0,0,0}, true)
     -- Circle for lightness scale
     Color.set("black")
-    --Msg(string.format("%f,%f,%f", gfx.r, gfx.g, gfx.b))
+    --U.msg(string.format("%f,%f,%f", gfx.r, gfx.g, gfx.b))
     local cx,cy = ui.lbox:lerp(0.5, 1 - s.lum)
     bgx.circle(cx, cy, ui.selCircleSize, ui.selCircleThick)
     bgx.rect(b1, false)
@@ -572,10 +642,7 @@ local function uiLoop()
     nb = colorNumBox(b1:clone():cellY(2, 1, 3), "Blue", b, 255, mouse)
     if nr or ng or nb then
       nr, ng, nb = (nr or r), (ng or g), (nb or b)
-      Msg3f(nr, ng, nb)
       s.hue, s.sat, s.lum = rgbToHsl(nr, ng, nb)
-      Msg3f(s.hue, s.sat, s.lum)
-      Msg3f(hslToRgb(s.hue, s.sat, s.lum))
     end
   end
   
@@ -715,12 +782,24 @@ ShowColorPicker = function(opts)
     s.snap = true
     s.after = opts.after or function() end
     s.threads = {}
+    -- Are we using SWS? Only true if SWS is available
+    s.useSWS = U.firstOf(opts.useSWS, true) and hasSWS
     
     -- Here we load our recent and favorite colors
     local rColors = reaper.GetExtState(EXT_STATE_PATH, "recentColors")
     s.recentColors = loadColorList(rColors, ui.recentColorsCount, {1,1,1})
-    -- Load favorite colors
-    local scolors = opts.favoriteColors or reaper.GetExtState(EXT_STATE_PATH, "favoriteColors")
+    
+    -- Load favorite colors. This is complicated b/c of the options.
+    -- First we see if the user supplied favorite colors for us
+    local scolors = opts.favoriteColors
+    -- If we're allowed to use SWS and it's available then try
+    if (not scolors) and s.useSWS then
+      scolors = loadFavoriteColorsSWS()
+    end
+    -- Fall back to config value
+    if not scolors then 
+      scolors = reaper.GetExtState(EXT_STATE_PATH, "favoriteColors")
+    end
     s.favoriteColors = loadColorList(scolors, ui.favoriteColorsCount, {1,1,1})
   end
   
@@ -889,8 +968,7 @@ if debug_mode then
     scale = 1.0,
     -- Function called on accept, color is {r,g,b}
     after = function(ok, color)
-      local fmt = "Ok: %s | Selected color: %d %d %d\n"
-      reaper.ShowConsoleMsg(fmt:format(tostring(ok), color[1], color[2], color[3]))
+      U.msgfmt("Ok: %s | Selected color: %d %d %d\n", tostring(ok), color[1], color[2], color[3])
     end,
   }
 end

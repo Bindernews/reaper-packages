@@ -5,6 +5,13 @@
       <metadata>
         <link rel="website">https://github.com/bindernews/reaper-packages</link>
       </metadata>
+      <version name="1.1" author="BinderNews" time="2020-07-06T18:13:00Z">
+        <changelog><![CDATA[+ Moved SWS features into ColorPicker itself so all uses of ColorPicker support SWS]]></changelog>
+        <source>https://github.com/Bindernews/reaper-packages/raw/main/Color/BinderNews_ColorPicker.lua</source>
+        <source>https://github.com/Bindernews/reaper-packages/raw/main/Color/BinderNews_ColorTracks.lua</source>
+        <source>https://github.com/Bindernews/reaper-packages/raw/main/Color/BinderNews_ColorItems.lua</source>
+        <source>https://github.com/Bindernews/reaper-packages/raw/main/Color/BinderNews_ColorManager.lua</source>
+      </version>
       <version name="1.0" author="BinderNews" time="2020-07-05T18:31:34Z">
         <changelog><![CDATA[+ Initial Release]]></changelog>
         <source>https://github.com/Bindernews/reaper-packages/raw/main/Color/BinderNews_ColorPicker.lua</source>
