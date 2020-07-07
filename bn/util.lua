@@ -48,4 +48,19 @@ function U.firstOf(...)
   end
 end
 
+function U.bool(v)
+  if     v == "false" then return false
+  elseif v then return true 
+  else   return false end
+end
+
+function U.num(s, default)
+  local n = tonumber(s)
+  if n ~= nil then return n else return default end
+end
+
+function U.str(v)
+  return tostring(v)
+end
+
 return U

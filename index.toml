@@ -1,0 +1,73 @@
+[index]
+version = 1
+name = "BinderNews Scripts"
+
+[reapack.cp]
+name = "BinderNews - Color Picker"
+author = "BinderNews"
+type = "script"
+category = "Color"
+metadata.website = "https://github.com/bindernews/reaper-packages"
+metadata.description = """
+A pleasing and intuitive color picker based on the one in FL Studio.
+"""
+
+[reapack.cp.version."1.1"]
+time = "2020-07-06T18:13:00Z"
+changelog = """
++ Moved SWS features into ColorPicker itself so all uses of ColorPicker support SWS\
+"""
+vars.base = "https://github.com/Bindernews/reaper-packages/raw/main/Color"
+files = [
+  "${base}/BinderNews_ColorPicker.lua",
+  "${base}/BinderNews_ColorTracks.lua",
+  "${base}/BinderNews_ColorItems.lua",
+  "${base}/BinderNews_ColorManager.lua",
+]
+
+[reapack.cp.version."1.0"]
+time = "2020-07-05T18:31:34Z"
+changelog = "+ Initial commit"
+vars.base = "https://github.com/Bindernews/reaper-packages/raw/main/Color"
+files = [
+  "${base}/BinderNews_ColorPicker.lua",
+  "${base}/BinderNews_ColorTracks.lua",
+  "${base}/BinderNews_ColorItems.lua",
+  "${base}/BinderNews_ColorManager.lua",
+]
+
+[reapack.lib]
+name = "BinderNews - Library"
+author = "BinderNews"
+type = "script"
+category = "Development"
+[reapack.lib.metadata]
+website = "https://github.com/bindernews/reaper-packages"
+
+[reapack.lib.version."1.0"]
+time = "2020-07-05T18:31:34Z"
+changelog = "+Initial commit"
+vars.base = "https://github.com/Bindernews/reaper-packages/raw/main/bn"
+
+files = [
+  { src="${base}/bgx.lua", file="../bn/bgx.lua" },
+  { src="${base}/bmath.lua", file="../bn/bmath.lua" },
+  { src="${base}/box.lua", file="../bn/box.lua" },
+  { src="${base}/color.lua", file="../bn/color.lua" },
+  { src="${base}/table.lua", file="../bn/table.lua" },
+  { src="${base}/util.lua", file="../bn/util.lua" },
+]
+
+
+[reapack.open-item]
+name = "BinderNews - Better Open Item"
+author = "BinderNews"
+type = "script"
+category = "Various"
+[reapack.open-item.version."1.0"]
+time = "2020-07-06T21:58:00Z"
+changelog = "+Initial commit"
+vars.base = "https://github.com/Bindernews/reaper-packages/raw/main/Various"
+files = [
+  "${base}/BinderNews_BetterOpenMediaItem.lua",
+]
